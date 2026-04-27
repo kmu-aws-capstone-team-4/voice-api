@@ -16,7 +16,7 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5174",
         "https://mefit.kr",
         "https://www.mefit.kr",
-        "https://api.mefit.kr",   
+        "https://api.mefit.kr",
     ]
 
     # Backend API for token verification
