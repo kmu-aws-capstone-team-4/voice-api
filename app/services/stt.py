@@ -60,11 +60,16 @@ async def download_audio(audio_url: str) -> str:
     os.close(fd)
 
     timeout = aiohttp.ClientTimeout(total=AUDIO_DOWNLOAD_TIMEOUT_SECONDS)
-    async with aiohttp.ClientSession(timeout=timeout) as session, session.get(audio_url) as response:
-        response.raise_for_status()
-        with open(temp_path, "wb") as out:
-            async for chunk in response.content.iter_chunked(64 * 1024):
-                out.write(chunk)
+    try:
+        async with aiohttp.ClientSession(timeout=timeout) as session, session.get(audio_url) as response:
+            response.raise_for_status()
+            with open(temp_path, "wb") as out:
+                async for chunk in response.content.iter_chunked(64 * 1024):
+                    await asyncio.to_thread(out.write, chunk)
+    except Exception:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise
 
     return temp_path
 
