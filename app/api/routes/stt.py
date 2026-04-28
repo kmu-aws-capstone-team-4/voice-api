@@ -1,5 +1,7 @@
 """STT (Speech-to-Text) API routes."""
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.api.dependencies import get_current_user
@@ -7,6 +9,7 @@ from app.api.schemas.stt import SttRequest, SttResponse
 from app.services.stt import SttSaturatedError, transcribe
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 SATURATED_RETRY_AFTER_SECONDS = 30
 
@@ -31,9 +34,10 @@ async def speech_to_text(
             detail="STT worker saturated. Try again later.",
         ) from exc
     except Exception as exc:
+        logger.exception("STT processing failed for audio_url=%s", request.audio_url)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"STT failed: {exc!s}",
+            detail="STT processing failed due to an internal error.",
         ) from exc
 
     return SttResponse(**result)
