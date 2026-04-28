@@ -106,12 +106,12 @@ def _run_transcription(model: WhisperModel, path: str, language: str, prompt: st
 
 
 async def transcribe(audio_url: str, language: str, prompt: str | None = None) -> dict:
-    """Download audio_url, run faster-whisper inference under the semaphore, and return results."""
-    audio_path = await download_audio(audio_url)
-    try:
-        async with acquire_inference_slot():
+    """Acquire the inference slot first, then download audio (avoid download flood DoS)."""
+    async with acquire_inference_slot():
+        audio_path = await download_audio(audio_url)
+        try:
             model = await get_model()
             return await asyncio.to_thread(_run_transcription, model, audio_path, language, prompt)
-    finally:
-        if os.path.exists(audio_path):
-            os.remove(audio_path)
+        finally:
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
