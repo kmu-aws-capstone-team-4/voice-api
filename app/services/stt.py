@@ -93,7 +93,7 @@ def _run_transcription(model: WhisperModel, path: str, language: str, prompt: st
                 "start_ms": int(segment.start * 1000),
                 "end_ms": int(segment.end * 1000),
                 "text": segment.text,
-                "confidence": float(getattr(segment, "avg_logprob", 0.0)),
+                "avg_logprob": float(getattr(segment, "avg_logprob", 0.0)),
             }
         )
 

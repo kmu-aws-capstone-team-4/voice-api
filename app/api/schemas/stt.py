@@ -7,7 +7,7 @@ class SttSegment(BaseModel):
     start_ms: int = Field(..., description="Segment start (milliseconds)")
     end_ms: int = Field(..., description="Segment end (milliseconds)")
     text: str = Field(..., description="Transcribed text for this segment")
-    confidence: float = Field(..., description="Average log probability (model confidence)")
+    avg_logprob: float = Field(..., description="Average log probability of the tokens (negative; closer to 0 = higher confidence)")
 
 
 class SttRequest(BaseModel):
