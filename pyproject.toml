@@ -11,6 +11,7 @@ dependencies = [
     "pydantic-settings>=2.7.0",
     "edge-tts>=6.1.10",
     "faster-whisper>=1.2.1",
+    "python-multipart>=0.0.27",
 ]
 
 [project.optional-dependencies]
