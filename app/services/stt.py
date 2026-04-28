@@ -115,3 +115,10 @@ async def transcribe(audio_url: str, language: str, prompt: str | None = None) -
         finally:
             if os.path.exists(audio_path):
                 os.remove(audio_path)
+
+
+async def transcribe_file(audio_path: str, language: str, prompt: str | None = None) -> dict:
+    """Run faster-whisper inference on an already-saved local audio file (under semaphore)."""
+    async with acquire_inference_slot():
+        model = await get_model()
+        return await asyncio.to_thread(_run_transcription, model, audio_path, language, prompt)
